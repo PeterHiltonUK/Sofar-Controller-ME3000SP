@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# SYSLIB0051: Type or member is obsolete
+dotnet_diagnostic.SYSLIB0051.severity = warning
+
+# SYSLIB0044: Type or member is obsolete
+dotnet_diagnostic.SYSLIB0044.severity = silent

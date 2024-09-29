@@ -1,0 +1,4 @@
+sk_live_RDJRUV6t9iW8NlQ3b2ADtlmf
+
+
+curl -u "sk_live_RDJRUV6t9iW8NlQ3b2ADtlmf:" "https://api.octopus.energy/v1/electricity-meter-points/1300013672393/meters/20J0015149/consumption/"
