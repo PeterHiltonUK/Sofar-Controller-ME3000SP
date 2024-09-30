@@ -120,5 +120,13 @@ namespace SofarController
 
         [JsonProperty("Serial")]
         public int SerialNo = 809805460;
+
+        [JsonProperty("SolcastLocation")]
+        public string SolLoc = "Enter Location";
+
+        [JsonProperty("SolcastAPIKey")]
+        public string SolAPI = "Enter API Code";
+
+
     }
 }

@@ -12,9 +12,12 @@ namespace SofarController
         //private string dir = AppDomain.CurrentDomain.BaseDirectory;
         string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string filename = "\\SolCastForeCast.dat";
+        OptionData options;
 
-        public Solcast()
+        public Solcast(OptionData options)
         {
+            this.options = options;
+
             if (!File.Exists(dir + filename))
             {
                 forecast = GetSolcastForeCast();
@@ -52,13 +55,16 @@ namespace SofarController
                 ForecastAM = forecast.SumAMData(1);
                 ForecastPM = forecast.SumPMData(1);
             }
+
+            this.options = options;
         }
+
 
         public SollCastForeCastData GetSolcastForeCast()
         {
             SollCastForeCastData t = new();
 
-            var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/8386-9cdd-3616-5f05/forecasts?format=json&api_key=SOHrZpKROlcIFi6sTmN80xW6cQXB-llJ");
+            var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/" + options.SolLoc +"/forecasts?format=json&api_key=" + options.SolAPI);
             if (res != "")
             {
                 t = (SollCastForeCastData)JsonSerializer.Deserialize(res, typeof(SollCastForeCastData));
@@ -74,7 +80,7 @@ namespace SofarController
             SollCastForeCastData? t = null;
             if (DateTime.Now.Day > LastDataSetActual.Day)
             {
-                var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/8386-9cdd-3616-5f05/estimated_actuals?format=json&api_key=SOHrZpKROlcIFi6sTmN80xW6cQXB-llJ");
+                var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/" + options.SolLoc +"/estimated_actuals?format=json&api_key=" + options.SolAPI);
                 t = (SollCastForeCastData)JsonSerializer.Deserialize(res, typeof(SollCastForeCastData));
                 LastDataSetActual = DateTime.Now;
             }
@@ -152,9 +158,21 @@ namespace SofarController
             int start = 0, end = 0;
             double total = 0;
 
+            int daysinmonth = DateTime.DaysInMonth(now.Year, now.Month);
+            int DayToRetrieve = now.Day + DayOffset;
+
+            if (DateTime.Now.Day == daysinmonth && DayOffset == 0)
+            {
+                DayToRetrieve = daysinmonth;
+            }
+            else
+            { 
+                DayToRetrieve = 1 + DayOffset;
+            }
+
             for (int i = 0; i < forecasts.Count(); i++)
             {
-                if (forecasts[i].date().Day == now.Day + DayOffset)
+                if (forecasts[i].date().Day == DayToRetrieve)
                 {
                     if (start == 0)
                         start = i;
@@ -166,7 +184,7 @@ namespace SofarController
                 }
             }
 
-            for (int i = start; i <= end; i++)
+            for (int i = start; i < end; i++)
             {
                 total += forecasts[i].pv_estimate * 0.5; // half hourly data
             }
@@ -179,9 +197,21 @@ namespace SofarController
             int start = 0, end = 0;
             double total = 0;
 
+            int daysinmonth = DateTime.DaysInMonth(now.Year, now.Month);
+            int DayToRetrieve = now.Day + DayOffset;
+
+            if (DateTime.Now.Day == daysinmonth && DayOffset == 0)
+            {
+                DayToRetrieve = daysinmonth;
+            }
+            else
+            {
+                DayToRetrieve = 1 + DayOffset;
+            }
+
             for (int i = 0; i < forecasts.Count(); i++)
             {
-                if (forecasts[i].date().Day == now.Day + DayOffset)
+                if (forecasts[i].date().Day == DayToRetrieve)
                 {
                     if (forecasts[i].date().Hour == 12)
                     {

@@ -13,7 +13,7 @@ namespace Controller
     public partial class MainForm : Form
     {
         private Sofar sofar;
-        private Solcast solcast = new Solcast();
+        private Solcast solcast;
         private Octopus octData = new Octopus();
         private MyTimer PassiveTOUtimer, DataUpdateTimer;
         private Tarrif agile;
@@ -28,6 +28,8 @@ namespace Controller
 
         public void UpdateByTimer()
         {
+            solcast= new Solcast(options);
+
             UpdateData(options);
 
             WorkMode wm = GetWorkModeCBX();
@@ -67,6 +69,8 @@ namespace Controller
 
             Update();
             Refresh();
+
+            ud.SendData(sofar, solcast);
         }
 
         private void MyTimer_Tick(object sender, EventArgs e) // single thread
@@ -120,6 +124,8 @@ namespace Controller
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            
+
             if (File.Exists(dir + "\\Options.txt"))
             {
                 options = ReadWriteJson.ReadFromJsonFile<OptionData>(dir + "\\Options.txt");
@@ -131,6 +137,7 @@ namespace Controller
                 options.COMPort = input;
             }
 
+            solcast = new Solcast(options);
             WIFICBX.Checked = options.WIFI;
 
             sofar = new Sofar(options);

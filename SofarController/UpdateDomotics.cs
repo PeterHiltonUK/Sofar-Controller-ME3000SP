@@ -11,11 +11,11 @@ namespace SofarController
                 if(sofar.Data.ContainsKey(eData.GridIOPwr))
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=1&nvalue=0&svalue=" + sofar.Data[eData.GridIOPwr]);
                 if (sofar.Data.ContainsKey(eData.HouseConsumptionPwr))
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=2&nvalue=0&svalue=" + sofar.Data[eData.HouseConsumptionPwr]);
+                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=2&nvalue=0&svalue=" + sofar.Data[eData.HouseConsumptionPwr]*1000);
                 if (sofar.Data.ContainsKey(eData.InternalIOPwr))
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=3&nvalue=0&svalue=" + sofar.Data[eData.InternalIOPwr]);
+                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=3&nvalue=0&svalue=" + sofar.Data[eData.InternalIOPwr] * 1000);
                 if (sofar.Data.ContainsKey(eData.PVGenerationPwr))
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=4&nvalue=0&svalue=" + sofar.Data[eData.PVGenerationPwr]);
+                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=4&nvalue=0&svalue=" + sofar.Data[eData.PVGenerationPwr]*1000);
                 if (sofar.Data.ContainsKey(eData.EPSOutputV))
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=5&nvalue=0&svalue=" + sofar.Data[eData.EPSOutputV]);
                 if (sofar.Data.ContainsKey(eData.EPSOutputPwr))
@@ -29,7 +29,7 @@ namespace SofarController
                 if (sofar.Data.ContainsKey(eData.TodayConsumptionWh))
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=10&nvalue=0&svalue=" + sofar.Data[eData.TodayConsumptionWh]);
                 if (sofar.Data.ContainsKey(eData.BatteryChargeDischargePwr))
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=11&nvalue=0&svalue=" + sofar.Data[eData.BatteryChargeDischargePwr]);
+                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=11&nvalue=0&svalue=" + sofar.Data[eData.BatteryChargeDischargePwr]*1000);
                 if (sofar.Data.ContainsKey(eData.BatteryCycles))
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=12&nvalue=0&svalue=" + sofar.Data[eData.BatteryCycles]);
                 if (sofar.Data.ContainsKey(eData.BatteryChrgLevel))
@@ -48,7 +48,7 @@ namespace SofarController
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=20&nvalue=0&svalue=" + sofar.Data[eData.TotalLoadConsumption]);
 
                 if (solcast is not null)
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=32&nvalue=0&svalue=" + (solcast.ForecastAM + solcast.ForecastPM).ToString("F2"));
+                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=32&nvalue=0&svalue=" + ((solcast.ForecastAM + solcast.ForecastPM)*100).ToString("F2"));
             }
         }
 

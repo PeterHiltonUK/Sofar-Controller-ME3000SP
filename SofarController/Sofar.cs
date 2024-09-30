@@ -188,7 +188,7 @@ namespace SofarController
                 Tuple.Create("Grid IO Pwr", 0x212, 0.0, 0.001d, true),
                 Tuple.Create("House Consumption Pwr", 0x213, 0.0, 0.001d, false),
                 Tuple.Create("Internal IO Pwr", 0x214, 0.0, 0.01d, true),
-                Tuple.Create("PV Generation Pwr", 0x215, 0.0, 0.001d, false),
+                Tuple.Create("PV Generation Pwr", 0x215, 0.0, 0.01d, false),
                 Tuple.Create("EPS Output V", 0x216, 0.0, 0.1d, false),
                 Tuple.Create("EPS Output Pwr", 0x217, 0.0, 1d, false),
                 Tuple.Create("TodayGeneratedSolar Wh", 0x218, 0.0, 0.01d, false),
