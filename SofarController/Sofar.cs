@@ -112,10 +112,18 @@ namespace SofarController
         IPEndPoint serverFullAddr;
 
         public Sofar(OptionData options)
-        {       
-            
+        {
+            setPortOrSockets(options);
+        }
+
+        public void setPortOrSockets(OptionData options)
+        {
             if (options.WIFI)
             {
+                if (port is not null)
+                    port.Close();
+                if(sock !=null)
+                    sock.Close();
                 sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 serverIP = IPAddress.Parse(options.IPAddress.ToString());
@@ -126,6 +134,9 @@ namespace SofarController
             }
             else
             {
+                if(sock is not null)
+                    sock.Close();
+
                 port = new(options.COMPort)
                 {
                     // configure serial port
@@ -160,17 +171,7 @@ namespace SofarController
         public List<Tuple<string, int, double, double, bool>> GetData(OptionData options, bool UpdateTOU)
         {
 
-            if (options.WIFI)
-            {
-                sock.Close();
-                sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                serverIP = IPAddress.Parse(options.IPAddress.ToString());
-                serverFullAddr = new IPEndPoint(serverIP, options.IPPort);
-                sock.Connect(serverFullAddr);
-                factory = new ModbusFactory();
-                master = factory.CreateMaster(sock);
-            }
 
             master.V5IPAddress = options.IPAddress;
             master.V5IPPort = options.IPPort; 
@@ -207,26 +208,26 @@ namespace SofarController
             {
                 for (int i = 0; i < variables.Count; i++)
                 {
-                    //if (i == 2)
-                    //    Debugger.Break();
+//                    if (i == 2)
+  //                      Debugger.Break();
 
                     double val=0;
                     try
                     {
-                        if (!variables[i].Item5)
-                            val = master.ReadHoldingRegisters(variables[i].Item1, 1, (ushort)variables[i].Item2, 1, options.WIFI)[0];
-                        else
-                            val = (Int16)master.ReadHoldingRegisters(variables[i].Item1,1, (ushort)variables[i].Item2, 1, options.WIFI)[0];
-
+                       val = master.ReadHoldingRegisters(variables[i].Item1, 1, (ushort)variables[i].Item2, 1, options.WIFI)[0];
                     }
                     catch
                     {
 
                     }
 
+                    if (!variables[i].Item5)
+                    {
+                        val = (Int16)val;
+                    }
 
-                    //if (i == 8)
-                    //    Debugger.Break();
+                        //if (i == 8)
+                        //    Debugger.Break();
 
                     val *= variables[i].Item4;
 

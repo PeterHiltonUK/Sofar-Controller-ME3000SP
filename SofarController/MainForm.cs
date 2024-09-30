@@ -460,6 +460,8 @@ namespace Controller
         private void WIFICBX_CheckedChanged(object sender, EventArgs e)
         {
             options.WIFI = WIFICBX.Checked;
+            if(sofar is not null)
+                sofar.setPortOrSockets(options);
 
             if (WIFICBX.Checked)
             {
