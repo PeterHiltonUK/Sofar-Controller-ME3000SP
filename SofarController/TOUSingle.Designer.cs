@@ -31,7 +31,7 @@
             TOUData touData1 = new TOUData();
             LoadTOU1 = new Button();
             SaveTOU1 = new Button();
-            tou1 = new TOUControl();
+            tou1Control = new TOUControl();
             SuspendLayout();
             // 
             // LoadTOU1
@@ -65,12 +65,12 @@
             touData1.Soc = (ushort)0;
             touData1.StartDate = new DateOnly(1, 1, 1);
             touData1.StartTime = new TimeOnly(0L);
-            tou1.Data = touData1;
-            tou1.GroupName = "TOU 1";
-            tou1.Location = new Point(29, 59);
-            tou1.Name = "tou1";
-            tou1.Size = new Size(273, 294);
-            tou1.TabIndex = 47;
+            tou1Control.Data = touData1;
+            tou1Control.GroupName = "TOU 1";
+            tou1Control.Location = new Point(29, 59);
+            tou1Control.Name = "tou1";
+            tou1Control.Size = new Size(273, 294);
+            tou1Control.TabIndex = 47;
             // 
             // TOUSingle
             // 
@@ -79,7 +79,7 @@
             ClientSize = new Size(340, 376);
             Controls.Add(LoadTOU1);
             Controls.Add(SaveTOU1);
-            Controls.Add(tou1);
+            Controls.Add(tou1Control);
             Name = "TOUSingle";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TOUSingle";
@@ -90,6 +90,6 @@
 
         private Button LoadTOU1;
         private Button SaveTOU1;
-        private TOUControl tou1;
+        private TOUControl tou1Control;
     }
 }

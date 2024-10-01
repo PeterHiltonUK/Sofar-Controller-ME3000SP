@@ -15,25 +15,31 @@ namespace SofarController
         private Sofar sofarClass;
         OptionData optionData;
 
-        public TOUSingle(TOUData tOU0, Sofar sofarClass,OptionData optionData)
+        public TOUSingle(TOUData tou, Sofar sofarClass,OptionData optionData)
         {
-            this.optionData = optionData;
             InitializeComponent();
-            this.sofarClass = sofarClass;
-            tou1.Data = tOU0;
-            tou1.Update();
+
+            if (tou is not null)
+            {
+                this.optionData = optionData;
+                this.sofarClass = sofarClass;
+                tou1Control.Data = tou;
+                tou1Control.Update();
+            }
         }
 
         private void SaveTOU1_Click(object sender, EventArgs e)
         {
-            tou1.RetriveData();
-            sofarClass.WriteTimeOfUseParams(0, tou1.Data, optionData);
+            tou1Control.RetriveData();
+            if(sofarClass is not null)
+                sofarClass.WriteTimeOfUseParams(0, tou1Control.Data, optionData);
         }
 
         private void LoadTOU1_Click(object sender, EventArgs e)
         {
-            sofarClass.UpdateTOUData(0, optionData);
-            tou1.Update();
+            if (sofarClass is not null)
+                sofarClass.UpdateTOUData(0, optionData);
+            tou1Control.Update();
         }
 
     }

@@ -651,7 +651,7 @@
             button14.TabIndex = 2;
             button14.Text = "Set Passive Mode";
             button14.UseVisualStyleBackColor = false;
-            button14.Click += button14_Click;
+            button14.Click += Passive_Click;
             // 
             // button13
             // 
@@ -663,7 +663,7 @@
             button13.TabIndex = 1;
             button13.Text = "Set TOU Mode";
             button13.UseVisualStyleBackColor = false;
-            button13.Click += button13_Click;
+            button13.Click += TOU_Click;
             // 
             // button12
             // 

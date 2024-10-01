@@ -2,6 +2,7 @@ using Microsoft.VisualBasic;
 using ReadOctopus;
 using SofarController;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using static ReadOctopus.Octopus;
 using static SofarController.Solcast;
@@ -348,9 +349,11 @@ namespace Controller
             }
         }
 
-        private void button14_Click(object sender, EventArgs e)
+        private void Passive_Click(object sender, EventArgs e)
         {
-            DataUpdateTimer.Change(10000, 50000);
+            if(DataUpdateTimer is not null)
+                DataUpdateTimer.Change(10000, 50000);
+
             if (sofar.mode == WorkMode.PASSIVE)
             {
                 PassiveForm frm = new(sofar, sofar.TOUPassive, options);
@@ -360,17 +363,24 @@ namespace Controller
             {
                 MessageBox.Show("Please select Passive mode");
             }
-            DataUpdateTimer.Change(100, 5000);
+
+            if(DataUpdateTimer is not null)
+                DataUpdateTimer.Change(100, 5000);
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private void TOU_Click(object sender, EventArgs e)
         {
             //TOUForm frm = new(sofardata.TOU1, sofardata.TOU2, sofardata.TOU3, sofardata.TOU4, sofardata);
             if (DataUpdateTimer is not null)
                 DataUpdateTimer.Change(10000, 50000);
 
-            TOUSingle frm = new(sofar.TOU1, sofar, options);
-            frm.ShowDialog();
+            if (sofar.DataAvailable)
+            {
+                TOUSingle frm = new(sofar.TOU1, sofar, options);
+                frm.ShowDialog();
+            }
+            else
+                MessageBox.Show("Please wait for data to update");
 
             if (DataUpdateTimer is not null)
                 DataUpdateTimer.Change(100, 5000);
@@ -378,10 +388,14 @@ namespace Controller
 
         private void Agile_Click(object sender, EventArgs e)
         {
-            DataUpdateTimer.Change(10000, 50000);
+            if (DataUpdateTimer is not null)
+                DataUpdateTimer.Change(10000, 50000);
+            
             AgileForm frm = new AgileForm(agile);
             frm.ShowDialog();
-            DataUpdateTimer.Change(100, 5000);
+
+            if (DataUpdateTimer is not null)
+                DataUpdateTimer.Change(100, 5000);
         }
 
         private void AutoModeRB_CheckedChanged(object sender, EventArgs e)

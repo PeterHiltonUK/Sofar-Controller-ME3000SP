@@ -51,18 +51,22 @@ namespace SofarController
         public const ushort Enable = 1, Disable = 0;
         public const ushort AutoMode = 0, TOUMode = 1, TimedMode = 2, PassiveMode = 3;
 
-        public TOUData TOU1 = new();
-        public TOUData TOU2 = new();
-        public TOUData TOU3 = new();
-        public TOUData TOU4 = new();
-        public TOUData TOUPassive = new();
+        public TOUData TOU1;
+        public TOUData TOU2;
+        public TOUData TOU3;
+        public TOUData TOU4;
+        public TOUData TOUPassive = new(); // Cant Read Passive mode
 
-        
+        public bool DataAvailable = false;
+
+        private Socket sock;
+        private IPAddress serverIP;
+        private IPEndPoint serverFullAddr;
 
         public void UpdateTOUData(int i, OptionData options)
         {
             if (i > 0)
-                ReadTimeOfUseParams(i,options);
+                ReadTimeOfUseParams(i, options);
             else
                 ReadTimeOfUseParamsCase0(options);
 
@@ -86,30 +90,30 @@ namespace SofarController
             switch (i)
             {
                 case 0:
+                    TOU1 = new();
                     TOU1.Update(i, false, "", "", "", "", 0, 0);
                     TOU1.Update(i, enable, StartTime, EndTime, StartDate, EndDate, soc, pow);
                     break;
 
                 case 1:
+                    TOU2 = new();
                     TOU2.Update(i, false, "", "", "", "", 0, 0);
                     TOU2.Update(i, enable, StartTime, EndTime, StartDate, EndDate, soc, pow);
                     break;
 
                 case 2:
+                    TOU3 = new();
                     TOU3.Update(i, false, "", "", "", "", 0, 0);
                     TOU3.Update(i, enable, StartTime, EndTime, StartDate, EndDate, soc, pow);
                     break;
 
                 case 3:
+                    TOU4 = new();
                     TOU4.Update(i, false, "", "", "", "", 0, 0);
                     TOU4.Update(i, enable, StartTime, EndTime, StartDate, EndDate, soc, pow);
                     break;
             }
         }
-
-        Socket sock;
-        IPAddress serverIP;
-        IPEndPoint serverFullAddr;
 
         public Sofar(OptionData options)
         {
@@ -122,7 +126,7 @@ namespace SofarController
             {
                 if (port is not null)
                     port.Close();
-                if(sock !=null)
+                if (sock != null)
                     sock.Close();
                 sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -134,7 +138,7 @@ namespace SofarController
             }
             else
             {
-                if(sock is not null)
+                if (sock is not null)
                     sock.Close();
 
                 port = new(options.COMPort)
@@ -163,18 +167,14 @@ namespace SofarController
             }
         }
 
-
         /// <summary>
         /// Name, location, no of data, multiplier, signed
         /// </summary>
         /// <returns></returns>
         public List<Tuple<string, int, double, double, bool>> GetData(OptionData options, bool UpdateTOU)
         {
-
-
-
             master.V5IPAddress = options.IPAddress;
-            master.V5IPPort = options.IPPort; 
+            master.V5IPPort = options.IPPort;
             master.V5SerialNo = options.SerialNo;
 
             List<Tuple<string, int, double, double, bool>> variables =
@@ -208,17 +208,16 @@ namespace SofarController
             {
                 for (int i = 0; i < variables.Count; i++)
                 {
-//                    if (i == 2)
-  //                      Debugger.Break();
+                    //                    if (i == 2)
+                    //                      Debugger.Break();
 
-                    double val=0;
+                    double val = 0;
                     try
                     {
-                       val = master.ReadHoldingRegisters(variables[i].Item1, 1, (ushort)variables[i].Item2, 1, options.WIFI)[0];
+                        val = master.ReadHoldingRegisters(variables[i].Item1, 1, (ushort)variables[i].Item2, 1, options.WIFI)[0];
                     }
                     catch
                     {
-
                     }
 
                     if (!variables[i].Item5)
@@ -226,8 +225,8 @@ namespace SofarController
                         val = (Int16)val;
                     }
 
-                        //if (i == 8)
-                        //    Debugger.Break();
+                    //if (i == 8)
+                    //    Debugger.Break();
 
                     val *= variables[i].Item4;
 
@@ -239,11 +238,13 @@ namespace SofarController
                 }
             }
 
-            if(UpdateTOU)
-                UpdateTOUData(0,options);
+            if (UpdateTOU)
+                UpdateTOUData(0, options);
 
-            if(Data.ContainsKey(eData.WorkMode))
+            if (Data.ContainsKey(eData.WorkMode))
                 mode = (WorkMode)Data[eData.WorkMode];
+
+            DataAvailable = true;
 
             return variables;
         }
@@ -301,7 +302,7 @@ namespace SofarController
             if (mode == WorkMode.PASSIVE)
             {
                 ushort val = 0x5555;
-                master.WriteMultipleRegisters(1, 0x1212, [val], options.WIFI );
+                master.WriteMultipleRegisters(1, 0x1212, [val], options.WIFI);
             }
             else
             {
@@ -314,7 +315,7 @@ namespace SofarController
             if (mode == WorkMode.PASSIVE)
             {
                 ushort val = (ushort)DischargeRate;
-                master.WriteMultipleRegisters(1, 0x1213, [val],optiosn.WIFI);
+                master.WriteMultipleRegisters(1, 0x1213, [val], optiosn.WIFI);
             }
             else
             {
@@ -322,9 +323,9 @@ namespace SofarController
             }
         }
 
-        public void SetWorkMode(WorkMode mode,OptionData options)
+        public void SetWorkMode(WorkMode mode, OptionData options)
         {
-            master.WriteMultipleRegisters(1, 0x1200, [(ushort)mode],options.WIFI);
+            master.WriteMultipleRegisters(1, 0x1200, [(ushort)mode], options.WIFI);
         }
 
         public void WriteTimeOfUseParams(ushort RuleNo, TOUData data, OptionData options)
@@ -386,7 +387,7 @@ namespace SofarController
                 endMonth = ByteHelper.UpByte(EDate[0]);
                 endDay = ByteHelper.LowerByte(EDate[0]);
 
-                UpdateTOUData(i,options);
+                UpdateTOUData(i, options);
             }
         }
 
