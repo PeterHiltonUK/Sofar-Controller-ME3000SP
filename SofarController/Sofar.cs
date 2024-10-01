@@ -179,12 +179,12 @@ namespace SofarController
 
             List<Tuple<string, int, double, double, bool>> variables =
             [
-                Tuple.Create("Work Mode", 0x1200, 0.0, 1d, true),
+                Tuple.Create("Work Mode", 0x1200, 0.0, 1d, false),
                 Tuple.Create("Inverter Freq", 0x20c, 0.0, 1 / 100.0, false),
-                Tuple.Create("Battery ChargeDischargePwr", 0x20d, 0.0, 0.01d, false),
+                Tuple.Create("Battery ChargeDischargePwr", 0x20d, 0.0, 0.01d, true),
                 Tuple.Create("Battery Cycles", 0x22c, 0.0, 1d, false),
                 Tuple.Create("Battery ChargeLevel", 0x210, 0.0, 1d, false),
-                Tuple.Create("Battery Temp", 0x211, 0.0, 1d, true),
+                Tuple.Create("Battery Temp", 0x211, 0.0, 1d, false),
                 Tuple.Create("Grid IO Pwr", 0x212, 0.0, 0.001d, true),
                 Tuple.Create("House Consumption Pwr", 0x213, 0.0, 0.001d, false),
                 Tuple.Create("Internal IO Pwr", 0x214, 0.0, 0.01d, true),
@@ -208,7 +208,7 @@ namespace SofarController
             {
                 for (int i = 0; i < variables.Count; i++)
                 {
-                    //                    if (i == 2)
+                    //                    if (i == 8)
                     //                      Debugger.Break();
 
                     double val = 0;
@@ -220,7 +220,7 @@ namespace SofarController
                     {
                     }
 
-                    if (!variables[i].Item5)
+                    if (variables[i].Item5)
                     {
                         val = (Int16)val;
                     }

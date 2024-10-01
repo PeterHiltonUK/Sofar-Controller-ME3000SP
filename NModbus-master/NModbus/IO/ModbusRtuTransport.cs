@@ -77,7 +77,9 @@ namespace NModbus.IO
 
         public virtual byte[] ReadV5()
         {
-            int numBytesRead = StreamResource.ReadAll(out byte[] frameBytes);
+            //int numBytesRead = StreamResource.ReadAll(out byte[] frameBytes);
+            byte[] frameBytes = new byte[34];
+            int numBytesRead = StreamResource.Client.Receive(frameBytes);
             return frameBytes;
         }
 
@@ -145,13 +147,13 @@ namespace NModbus.IO
         public byte[] WriteResponseV5()
         {
 
-            for (int i = 0; i < 20; i++)
+           /* for (int i = 0; i < 20; i++)
             {
                 if (StreamResource.Client.Available == 0)
                     Thread.Sleep(1000);
                 else
                     break;
-            }
+            }*/
 
             byte[] frame = ReadV5();
 
