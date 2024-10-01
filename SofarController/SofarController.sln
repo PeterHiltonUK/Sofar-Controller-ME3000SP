@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NModbus", "..\NModbus-maste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NModbus.Serial", "..\NModbus-master\NModbus.Serial\NModbus.Serial.csproj", "{54A35A8A-E101-4AC2-8E4D-DB63ACDACA38}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject1", "..\TestProject1\TestProject1.csproj", "{8A824DAB-F8AB-41C1-AD3D-F9DABFE15341}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "..\TestProject1\Tests.csproj", "{8A824DAB-F8AB-41C1-AD3D-F9DABFE15341}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChartControl", "..\ChartControl\ChartControl.csproj", "{CEE6CDC2-0DEE-45C9-BE83-A1D9F5527669}"
 EndProject
