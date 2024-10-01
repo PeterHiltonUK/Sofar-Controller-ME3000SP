@@ -23,7 +23,7 @@
 
         public object Clone()
         {
-            TOUData tou = new TOUData();
+            TOUData tou = new();
             tou.EndTime = endTime;
             tou.EndDate = endDate;
             tou.Pow = TOUPower;

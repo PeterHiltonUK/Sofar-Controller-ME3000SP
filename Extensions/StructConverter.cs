@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System;
+using Extensions;
 
 namespace SolarManCSharp
 {
@@ -6,22 +8,52 @@ namespace SolarManCSharp
     // This is probably not the best implementation, the fastest implementation, the most bug-proof implementation, or even the most functional implementation.
     // It's provided as-is for free. Enjoy.
 
+
+
+
     public class StructConverter
     {
+        public static byte AscCoded(int c)
+        {
+            return (byte)(Char)c;
+        }
+
         // We use this function to provide an easier way to type-agnostically call the GetBytes method of the BitConverter class.
         // This means we can have much cleaner code below.
-        private static byte[] TypeAgnosticGetBytes(object o)
+        private static byte[] GetBytes(object o)
         {
-            if (o is int) return BitConverter.GetBytes((int)o);
-            if (o is uint) return BitConverter.GetBytes((uint)o);
-            if (o is long) return BitConverter.GetBytes((long)o);
-            if (o is ulong) return BitConverter.GetBytes((ulong)o);
-            if (o is short) return BitConverter.GetBytes((short)o);
-            if (o is ushort) return BitConverter.GetBytes((ushort)o);
-            if (o is byte || o is sbyte) return new byte[] { (byte)o };
-            if (o is byte[] || o is sbyte[]) return (byte[])o;
-            if (o is Bytes || o is sbyte[]) return ((Bytes)o).Bytearray;
-            throw new ArgumentException("Unsupported object type found");
+            switch (o)
+            {
+                case int I:
+                    return BitConverter.GetBytes(I);
+                case (uint ui):
+                    return BitConverter.GetBytes(ui);
+                case (long l):
+                    return BitConverter.GetBytes(l);
+                case (ulong ul):
+                    return BitConverter.GetBytes(ul);
+                case (short s):
+                    byte[] t = BitConverter.GetBytes(s);
+                    return t;
+                case (ushort us):
+                    byte[] t2 = BitConverter.GetBytes(us);
+                    return t2;
+                case (byte b):
+                    return new byte[] { b };
+                case (sbyte sb):
+                    return new byte[] { (byte)sb };
+                case (byte[] ba):
+                    return ba;
+                case (sbyte[] sba):
+                    byte[] ba2 = new byte[sba.Length];
+                    for (int i = 0; i < sba.Length; i++)
+                        ba2[i] = (byte)sba[i];
+                    return ba2;
+                case (Bytes bts):
+                    return bts.Bytearray;
+                default:
+                    return Array.Empty<byte>();
+            }
         }
 
         private static string GetFormatSpecifierFor(object o)
@@ -40,6 +72,10 @@ namespace SolarManCSharp
             throw new ArgumentException("Unsupported object type found");
         }
 
+        public static object[] Unpack(string fmt, Bytes bytes)
+        {
+            return Unpack(fmt, bytes.Bytearray);
+        }
         /// <summary>
         /// Convert a byte array into an array of objects based on Python's "struct.unpack" protocol.
         /// </summary>
@@ -206,7 +242,7 @@ namespace SolarManCSharp
             // convert each item in the objects to the representative bytes
             foreach (object o in items)
             {
-                byte[] theseBytes = TypeAgnosticGetBytes(o);
+                byte[] theseBytes = GetBytes(o);
                 if (endianFlip == true) theseBytes = (byte[])theseBytes.Reverse();
                 outString += GetFormatSpecifierFor(o);
                 outputBytes.AddRange(theseBytes);

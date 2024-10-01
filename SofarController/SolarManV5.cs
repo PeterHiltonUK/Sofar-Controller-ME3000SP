@@ -107,7 +107,7 @@ namespace SolarManCSharp
             v5_length = ByteHelper.BytesFromHex("0000"); // placeholder value
             ushort test = 0x4510;
 
-            v5_controlcode = StructConverter2.Pack(new object[] { test });
+            v5_controlcode = StructConverter.Pack(new object[] { test });
             v5_serial = ByteHelper.BytesFromHex("0000");  // placeholder value
             v5_loggerserial = StructConverter.Pack(new object[] { (ushort)SerialNumber }, true, out string format);
             v5_frametype = ByteHelper.BytesFromHex("02");
