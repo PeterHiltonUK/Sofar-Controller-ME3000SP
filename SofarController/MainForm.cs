@@ -28,7 +28,7 @@ namespace Controller
 
         public void UpdateByTimer()
         {
-            solcast= new Solcast(options);
+            solcast = new Solcast(options);
 
             UpdateData(options);
 
@@ -124,8 +124,6 @@ namespace Controller
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            
-
             if (File.Exists(dir + "\\Options.txt"))
             {
                 options = ReadWriteJson.ReadFromJsonFile<OptionData>(dir + "\\Options.txt");
@@ -169,7 +167,6 @@ namespace Controller
                     break;
             }
 
-            
             TimeLBL.Text = "Please wait for initial data...";
 
             Refresh();
@@ -467,7 +464,7 @@ namespace Controller
         private void WIFICBX_CheckedChanged(object sender, EventArgs e)
         {
             options.WIFI = WIFICBX.Checked;
-            if(sofar is not null)
+            if (sofar is not null)
                 sofar.setPortOrSockets(options);
 
             if (WIFICBX.Checked)
@@ -678,8 +675,8 @@ namespace Controller
             else
             {
                 v8GaugeGridIO.Value = val;
-              //  if (v8GaugeGridIO.GaugeLabels.Count > 2)
-              //      v8GaugeGridIO.GaugeLabels[2].Text = val.ToString();
+                //  if (v8GaugeGridIO.GaugeLabels.Count > 2)
+                //      v8GaugeGridIO.GaugeLabels[2].Text = val.ToString();
             }
         }
 

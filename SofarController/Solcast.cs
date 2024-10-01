@@ -8,7 +8,7 @@ namespace SofarController
     {
         private DateTime LastDataSetForecast = new(), LastDataSetActual = new();
         public double ForecastAM, ForecastPM, ForecastTodayAM, ForecastTodayPM;
-        public SollCastForeCastData forecast;
+        public SollCastMainInfo forecast;
         //private string dir = AppDomain.CurrentDomain.BaseDirectory;
         string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string filename = "\\SolCastForeCast.dat";
@@ -25,7 +25,7 @@ namespace SofarController
             }
             else
             {
-                forecast = ReadWriteJson.ReadFromJsonFile<SollCastForeCastData>(dir + filename);
+                forecast = ReadWriteJson.ReadFromJsonFile<SollCastMainInfo>(dir + filename);
 
                 if (forecast is null) // Needs Updating
                 {
@@ -47,7 +47,7 @@ namespace SofarController
                 }
             }
 
-            if (forecast is not null)
+            if (forecast is not null && forecast.forecasts is not null)
             {
                 ForecastTodayAM = forecast.SumAMData(0);
                 ForecastTodayPM = forecast.SumPMData(0);
@@ -60,14 +60,14 @@ namespace SofarController
         }
 
 
-        public SollCastForeCastData GetSolcastForeCast()
+        public SollCastMainInfo GetSolcastForeCast()
         {
-            SollCastForeCastData t = new();
+            SollCastMainInfo t = new();
 
             var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/" + options.SolLoc +"/forecasts?format=json&api_key=" + options.SolAPI);
             if (res != "")
             {
-                t = (SollCastForeCastData)JsonSerializer.Deserialize(res, typeof(SollCastForeCastData));
+                t = (SollCastMainInfo)JsonSerializer.Deserialize(res, typeof(SollCastMainInfo));
                 if(t != null)
                     t.date = DateTime.Now;
             }
@@ -75,13 +75,13 @@ namespace SofarController
             return t;
         }
 
-        public SollCastForeCastData GetSolcastActual()
+        public SollCastMainInfo GetSolcastActual()
         {
-            SollCastForeCastData? t = null;
+            SollCastMainInfo? t = null;
             if (DateTime.Now.Day > LastDataSetActual.Day)
             {
                 var res = ExecuteCurl("curl https://api.solcast.com.au/rooftop_sites/" + options.SolLoc +"/estimated_actuals?format=json&api_key=" + options.SolAPI);
-                t = (SollCastForeCastData)JsonSerializer.Deserialize(res, typeof(SollCastForeCastData));
+                t = (SollCastMainInfo)JsonSerializer.Deserialize(res, typeof(SollCastMainInfo));
                 LastDataSetActual = DateTime.Now;
             }
             return t;
@@ -112,16 +112,16 @@ namespace SofarController
         }
     }
 
-    public class SollCastForeCastData
+    public class SollCastMainInfo
     {
         public string name { get; set; } = "";
         public DateTime date { get; set; } = new DateTime(1);
 
-        public SollCastForeCastData()
+        public SollCastMainInfo()
         {
         }
 
-        public SolCastForeCastResult[] forecasts { get; set; }
+        public SolCastForeData[] forecasts { get; set; }
 
         public double SumDayData(int DayOffset)
         {
@@ -235,7 +235,7 @@ namespace SofarController
         }
     }
 
-    public class SolCastForeCastResult
+    public class SolCastForeData
     {
         public double pv_estimate { get; set; }
         public double pv_estimate10 { get; set; }

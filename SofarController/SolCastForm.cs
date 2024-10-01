@@ -14,7 +14,7 @@ namespace SofarController
             v8PMForeCast.Value = (float)solcast.ForecastPM;
         }
 
-        private void PlotChart2(SollCastForeCastData sd)
+        private void PlotChart2(SollCastMainInfo sd)
         {
             //Set the titles and axis labels
             chart2.Series.Clear();
@@ -38,7 +38,7 @@ namespace SofarController
 
             foreach (var item in sd.forecasts)
             {
-                SolCastForeCastResult r = item;
+                SolCastForeData r = item;
                 DataPointCollection list = s1.Points;
                 double y = r.pv_estimate;
                 string x = r.date().DayOfWeek.ToString() + " " + r.date().TimeOfDay.ToString();
