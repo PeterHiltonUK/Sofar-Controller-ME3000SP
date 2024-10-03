@@ -69,6 +69,9 @@ namespace NModbus.Device
             ReadHoldingInputRegistersResponse response =
                 Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
+            if(response.Data is null)
+                return [9999];
+
             return response.Data.Take(request.NumberOfPoints).ToArray();
         }
 

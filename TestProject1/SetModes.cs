@@ -2,7 +2,9 @@
 using NModbus.Serial;
 using SofarController;
 using SolarManCSharp;
+using System.Diagnostics;
 using System.IO.Ports;
+using System.Management;
 
 namespace Tests
 {
@@ -13,6 +15,34 @@ namespace Tests
         [TestMethod]
         public void SetAutoMode()
         {
+
+            List<String> allPorts = new List<String>();
+            foreach (String portName in System.IO.Ports.SerialPort.GetPortNames())
+            {
+                allPorts.Add(portName);
+            }
+
+
+            string[] portNames = System.IO.Ports.SerialPort.GetPortNames();
+            Debug.Print("Available ports:");
+            foreach (string PortAvailable in portNames)
+            {
+                Debug.Print(PortAvailable);
+            }
+
+            ManagementObjectCollection collection;
+            using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
+            {
+                collection = searcher.Get();
+                foreach (var device in collection)
+                {
+                    var deviceId = (string)device.GetPropertyValue("DeviceID");
+                    var pnpDeviceId = (string)device.GetPropertyValue("PNPDeviceID");
+                    var descr = (string)device.GetPropertyValue("Description");
+                    var classCode = device.GetPropertyValue("ClassCode"); //null here
+                }
+            }
+
             int Case = 2;
             byte Slave = 1;
             ushort[] res = [4];
@@ -30,7 +60,8 @@ namespace Tests
                 StopBits = StopBits.One
             };
             port.Open();
-
+            Debug.Print(port.CDHolding.ToString());
+          
             ModbusFactory factory = new();
             IModbusMaster master = factory.CreateRtuMaster(port);
 

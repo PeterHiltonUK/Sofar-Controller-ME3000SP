@@ -2,35 +2,43 @@
 using System.ComponentModel;
 using Microsoft.VisualBasic;
 using System.Net;
+using System.Security.Policy;
 
 namespace SofarController
 {
     public partial class Options : Form
     {
-        public OptionData optionData = new();
+        private OptionData optionData = new();
 
-        //private string dir = AppDomain.CurrentDomain.BaseDirectory; //""; //"C:\\";
-        private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        // private string dir = AppDomain.CurrentDomain.BaseDirectory; //""; //"C:\\";
+        // private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        // string dir2 = "C:\\Users\\MarkA\\Desktop\\Sofar Information\\SofarController\\bin\\Debug\\net8.0-windows\\options.txt";
 
-        //string dir2 = "C:\\Users\\MarkA\\Desktop\\Sofar Information\\SofarController\\bin\\Debug\\net8.0-windows\\options.txt";
-
-        public Options()
+        public Options(OptionData options)
         {
+            this.optionData = options;
+
             InitializeComponent();
-            if (File.Exists(dir + "\\Options.txt"))
+            if (optionData is not null)
             {
-                optionData = ReadWriteJson.ReadFromJsonFile<OptionData>(dir + "\\Options.txt");
                 COMPORTtxt.Text = optionData.COMPort;
                 IPPortTxt.Text = optionData.IPPort.ToString();
                 IPAddresstxt.Text = optionData.IPAddress.ToString();
                 SerialTXT.Text = optionData.SerialNo.ToString();
+                SolcastAPIKey.Text=optionData.SolAPI.ToString();
+                SolcastLocationCodeTXT.Text = optionData.SolLoc.ToString();
             }
             else
             {
-                string input = Interaction.InputBox("Select COM Port", "COM PORT", "COM2");
-                optionData.COMPort = input;
-                ReadWriteJson.WriteToJsonFile(dir + "\\options.txt", optionData);
+                // string input = Interaction.InputBox("Select COM Port", "COM PORT", "COM2");
+                // optionData.COMPort = input;
+                // ReadWriteJson.WriteToJsonFile(dir + "\\options.txt", optionData);
             }
+        }
+
+        public OptionData GetOptions()
+        {
+            return optionData;
         }
 
         private void COMPORTtxt_Validating(object sender, CancelEventArgs e)
@@ -40,18 +48,13 @@ namespace SofarController
 
         private void Options_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ReadWriteJson.WriteToJsonFile(dir + "\\options.txt", optionData);
+            optionData.Save();
         }
 
         internal void ShowDialog(OptionData optiondata)
         {
             this.optionData = optiondata;
             this.ShowDialog();
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void IPAddresstxt_Validating(object sender, CancelEventArgs e)
@@ -88,6 +91,33 @@ namespace SofarController
                 SerialTXT.BackColor = Color.Red;
         }
 
+        private void Options_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SolcastLocationCodeTXT_Validating(object sender, CancelEventArgs e)
+        {
+            if (SolcastLocationCodeTXT.Text.Length > 5)
+            {
+                optionData.SolLoc = SolcastLocationCodeTXT.Text;
+                SolcastLocationCodeTXT.BackColor = Color.White;
+            }
+            else
+                SolcastLocationCodeTXT.BackColor = Color.Red;
+        }
+
+        private void SolcastAPIKey_Validating(object sender, CancelEventArgs e)
+        {
+            if (SolcastAPIKey.Text.Length > 5)
+            {
+                optionData.SolAPI = SolcastAPIKey.Text;
+                SolcastAPIKey.BackColor = Color.White;
+            }
+            else
+                SolcastAPIKey.BackColor = Color.Red;
+        }
+
         public string COMPort
         {
             get
@@ -103,6 +133,8 @@ namespace SofarController
 
     public class OptionData()
     {
+        private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         [JsonProperty("COMPort")]
         public string COMPort = "COM2";
 
@@ -127,6 +159,27 @@ namespace SofarController
         [JsonProperty("SolcastAPIKey")]
         public string SolAPI = "Enter API Code";
 
+        public void Read()
+        {
+            OptionData o = ReadWriteJson.ReadFromJsonFile<OptionData>(dir + "\\Options.txt");
+            this.COMPort = o.COMPort;
+            this.WIFI = o.WIFI;
+            this.WorkMode = o.WorkMode;
+            this.IPPort = o.IPPort;
+            this.IPAddress = o.IPAddress;
+            this.SerialNo = o.SerialNo;
+            this.SolLoc = o.SolLoc;
+            this.SolAPI = o.SolAPI;
+        }
 
+        public void Save()
+        {
+            ReadWriteJson.WriteToJsonFile(dir + "\\options.txt", this);
+        }
+
+        public bool FileExists()
+        {
+            return File.Exists(dir + "\\Options.txt");
+        }
     }
 }

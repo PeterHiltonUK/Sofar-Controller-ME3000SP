@@ -265,6 +265,9 @@ namespace NModbus.IO
 
         public void ValidateResponse(IModbusMessage request, IModbusMessage response)
         {
+            if (response is null)
+                return;
+
             // always check the function code and slave address, regardless of transport protocol
             if (request.FunctionCode != response.FunctionCode)
             {

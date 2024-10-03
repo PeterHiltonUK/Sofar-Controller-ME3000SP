@@ -220,21 +220,32 @@ namespace SofarController
                     {
                     }
 
-                    if (variables[i].Item5)
+                    if (val is not 9999)
                     {
-                        val = (Int16)val;
+                        if (variables[i].Item5)
+                        {
+                            val = (Int16)val;
+                        }
+
+                        //if (i == 8)
+                        //    Debugger.Break();
+
+                        val *= variables[i].Item4;
+
+                        Tuple<string, int, double, double, bool> v = variables[i];
+
+                        variables[i] = Tuple.Create(v.Item1, v.Item2, val, v.Item4, v.Item5);
+
+                        Data.TryAdd((eData)i, val);
                     }
+                  /*  else
+                    {
+                        Tuple<string, int, double, double, bool> v = variables[i];
 
-                    //if (i == 8)
-                    //    Debugger.Break();
+                        variables[i] = Tuple.Create(v.Item1, v.Item2, val, v.Item4, v.Item5);
 
-                    val *= variables[i].Item4;
-
-                    Tuple<string, int, double, double, bool> v = variables[i];
-
-                    variables[i] = Tuple.Create(v.Item1, v.Item2, val, v.Item4, v.Item5);
-
-                    Data.TryAdd((eData)i, val);
+                        Data.TryAdd((eData)i, val);
+                    }*/
                 }
             }
 

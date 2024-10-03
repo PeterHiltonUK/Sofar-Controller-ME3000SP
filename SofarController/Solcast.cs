@@ -163,11 +163,15 @@ namespace SofarController
 
             if (DateTime.Now.Day == daysinmonth && DayOffset == 0)
             {
-                DayToRetrieve = daysinmonth;
+                DayToRetrieve = DateTime.Now.Day;
             }
-            else
+            else if(DateTime.Now.Day == daysinmonth && DayOffset == 1)
             { 
                 DayToRetrieve = 1 + DayOffset;
+            }
+            else
+            {
+                DayToRetrieve = DateTime.Now.Day + DayOffset;
             }
 
             for (int i = 0; i < forecasts.Count(); i++)
@@ -202,11 +206,15 @@ namespace SofarController
 
             if (DateTime.Now.Day == daysinmonth && DayOffset == 0)
             {
-                DayToRetrieve = daysinmonth;
+                DayToRetrieve = DateTime.Now.Day;
+            }
+            else if (DateTime.Now.Day == daysinmonth && DayOffset == 1)
+            {
+                DayToRetrieve = 1 + DayOffset;
             }
             else
             {
-                DayToRetrieve = 1 + DayOffset;
+                DayToRetrieve = DateTime.Now.Day + DayOffset;
             }
 
             for (int i = 0; i < forecasts.Count(); i++)

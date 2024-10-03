@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            label6 = new Label();
+            label5 = new Label();
+            SolcastAPIKey = new TextBox();
+            SolcastLocationCodeTXT = new TextBox();
             label4 = new Label();
             SerialTXT = new TextBox();
             label3 = new Label();
@@ -42,6 +46,10 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(label5);
+            groupBox1.Controls.Add(SolcastAPIKey);
+            groupBox1.Controls.Add(SolcastLocationCodeTXT);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(SerialTXT);
             groupBox1.Controls.Add(label3);
@@ -52,10 +60,46 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(32, 24);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(202, 372);
+            groupBox1.Size = new Size(175, 405);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Options";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(15, 340);
+            label6.Name = "label6";
+            label6.Size = new Size(87, 15);
+            label6.TabIndex = 33;
+            label6.Text = "Solcast API Key";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(17, 275);
+            label5.Name = "label5";
+            label5.Size = new Size(124, 15);
+            label5.TabIndex = 32;
+            label5.Text = "Solcast Location Code";
+            // 
+            // SolcastAPIKey
+            // 
+            SolcastAPIKey.Location = new Point(15, 358);
+            SolcastAPIKey.Name = "SolcastAPIKey";
+            SolcastAPIKey.Size = new Size(100, 23);
+            SolcastAPIKey.TabIndex = 31;
+            SolcastAPIKey.Text = "Enter";
+            SolcastAPIKey.Validating += SolcastAPIKey_Validating;
+            // 
+            // SolcastLocationCodeTXT
+            // 
+            SolcastLocationCodeTXT.Location = new Point(15, 295);
+            SolcastLocationCodeTXT.Name = "SolcastLocationCodeTXT";
+            SolcastLocationCodeTXT.Size = new Size(100, 23);
+            SolcastLocationCodeTXT.TabIndex = 30;
+            SolcastLocationCodeTXT.Text = "Enter";
+            SolcastLocationCodeTXT.Validating += SolcastLocationCodeTXT_Validating;
             // 
             // label4
             // 
@@ -72,7 +116,7 @@
             SerialTXT.Name = "SerialTXT";
             SerialTXT.Size = new Size(100, 23);
             SerialTXT.TabIndex = 28;
-            SerialTXT.Text = "809805460";
+            SerialTXT.Text = "Enter";
             SerialTXT.Validating += SerialTXT_Validating;
             // 
             // label3
@@ -101,7 +145,6 @@
             label2.Size = new Size(60, 15);
             label2.TabIndex = 25;
             label2.Text = "IP address";
-            label2.Click += label2_Click;
             // 
             // IPAddresstxt
             // 
@@ -109,7 +152,7 @@
             IPAddresstxt.Name = "IPAddresstxt";
             IPAddresstxt.Size = new Size(100, 23);
             IPAddresstxt.TabIndex = 24;
-            IPAddresstxt.Text = "192.168.1.288";
+            IPAddresstxt.Text = "Enter";
             IPAddresstxt.Validating += IPAddresstxt_Validating;
             // 
             // COMPORTtxt
@@ -118,7 +161,7 @@
             COMPORTtxt.Name = "COMPORTtxt";
             COMPORTtxt.Size = new Size(100, 23);
             COMPORTtxt.TabIndex = 23;
-            COMPORTtxt.Text = "COM2";
+            COMPORTtxt.Text = "Enter";
             COMPORTtxt.Validating += COMPORTtxt_Validating;
             // 
             // label1
@@ -134,12 +177,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(239, 450);
             Controls.Add(groupBox1);
             Name = "Options";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Options";
             FormClosing += Options_FormClosing;
+            Load += Options_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
@@ -156,5 +200,9 @@
         private TextBox IPPortTxt;
         private Label label4;
         private TextBox SerialTXT;
+        private Label label6;
+        private Label label5;
+        private TextBox SolcastAPIKey;
+        private TextBox SolcastLocationCodeTXT;
     }
 }

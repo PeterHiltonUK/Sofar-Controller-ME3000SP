@@ -20,7 +20,7 @@ namespace Controller
         private Tarrif agile;
         private UpdateDomotics ud = new();
         private Options optionFrm;
-        private OptionData options;
+        private OptionData options = new();
         private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private double DischargeRate, ChargeRate;
         private MyTimer2 MyTimer = new MyTimer2();
@@ -125,16 +125,7 @@ namespace Controller
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (File.Exists(dir + "\\Options.txt"))
-            {
-                options = ReadWriteJson.ReadFromJsonFile<OptionData>(dir + "\\Options.txt");
-            }
-            else
-            {
-                options = new();
-                string input = Interaction.InputBox("Select COM Port", "COM PORT", "COM2");
-                options.COMPort = input;
-            }
+
 
             solcast = new Solcast(options);
             WIFICBX.Checked = options.WIFI;
@@ -177,6 +168,18 @@ namespace Controller
         public MainForm()
         {
             InitializeComponent();
+
+            if (options.FileExists())
+            {
+                options.Read();
+            }
+            else
+            {
+                optionFrm = new(options);
+                optionFrm.ShowDialog();
+                options = optionFrm.GetOptions();
+                options.Save();
+            }
         }
 
         public void UpdateTimeLabel()
@@ -464,14 +467,12 @@ namespace Controller
                     break;
             }
 
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-            ReadWriteJson.WriteToJsonFile(dir + "\\options.txt", options);
+            options.Save();
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            Options optionsForm = new Options();
+            Options optionsForm = new Options(options);
             optionsForm.ShowDialog(options);
         }
 

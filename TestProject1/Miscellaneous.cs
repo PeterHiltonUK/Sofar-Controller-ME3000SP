@@ -11,17 +11,6 @@ namespace Tests
     public class Miscellaneous
     {
         [TestMethod]
-        public void TestBytes()
-        {
-            ushort s = 3000;
-
-            byte u = ByteHelper.UpByte(s);
-            byte l = ByteHelper.LowerByte(s);
-
-            ushort s2 = ByteHelper.UShort(u, l);
-        }
-
-        [TestMethod]
         public void TestWriteRegister()
         {
             SerialPort port = new("COM2")
