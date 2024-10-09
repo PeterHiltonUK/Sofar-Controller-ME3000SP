@@ -1,11 +1,7 @@
-using Microsoft.VisualBasic;
 using ReadOctopus;
 using SofarController;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
 using static ReadOctopus.Octopus;
-using static SofarController.Solcast;
 using MyTimer = System.Threading.Timer;
 using MyTimer2 = System.Windows.Forms.Timer;
 
@@ -18,26 +14,36 @@ namespace Controller
         private Octopus octData = new Octopus();
         private MyTimer PassiveTOUtimer, DataUpdateTimer;
         private Tarrif agile;
-        private UpdateDomotics ud = new();
+        private UpdateDomotics domoticz = new();
         private Options optionFrm;
         private OptionData options = new();
         private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private double DischargeRate, ChargeRate;
         private MyTimer2 MyTimer = new MyTimer2();
-        private int WIFIUpdatePeriod = 2;
-        private double WiredUpdatePeriod = 0.5;
+        private int WIFIUpdatePeriod = 5;
+        private double WiredUpdatePeriod = 5;
+        bool TOUUpdated = false;
 
         public void UpdateByTimer()
         {
             solcast = new Solcast(options);
 
-            UpdateData(options);
-
-            WorkMode wm = GetWorkModeCBX();
-
-            if (GetWorkModeCBX() != sofar.mode)
+            if (!TOUUpdated)
             {
-                SetWorkModeCBX(sofar.mode);
+                sofar.GetData(options, true);
+                TOUUpdated = true;
+            }
+            else
+            {
+                sofar.GetData(options, false);
+            }
+
+            UpdateGaugeControls();
+
+            WorkMode wm = sofar.mode;
+
+            if (GetWorkModeCBX() != wm)
+            {
+                SetWorkModeCBX(wm);
             };
 
             if (WIFICBX.Checked)
@@ -46,11 +52,8 @@ namespace Controller
             }
             else
             {
-                MyTimer.Interval = (WIFIUpdatePeriod * 60 * 1000); // 1 mins
+                MyTimer.Interval = (((int)WiredUpdatePeriod * 60 * 1000)); // 1 mins
             }
-
-            sofar.GetData(options, true);
-            UpdateGaugeControls();
 
             if (TOUMacroCBX.Checked)
             {
@@ -71,7 +74,7 @@ namespace Controller
             Update();
             Refresh();
 
-            ud.SendData(sofar, solcast);
+            domoticz.SendData(sofar, solcast);
         }
 
         private void MyTimer_Tick(object sender, EventArgs e) // single thread
@@ -115,18 +118,16 @@ namespace Controller
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            //   sofar.GetData(options, true);
-            //   UpdateGaugeControls();
+            Application.DoEvents();
+            sofar.GetData(options, true);
+            UpdateGaugeControls();
             StartSingeThreadTimer();
             //StartMultiThreadTimer();
-
             //UpdateByTimer();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-
-
             solcast = new Solcast(options);
             WIFICBX.Checked = options.WIFI;
 
@@ -254,11 +255,6 @@ namespace Controller
             }
         }
 
-        public void UpdateData(OptionData options)
-        {
-            sofar.GetData(options, false);
-        }
-
         private void SolCastData_Click(object sender, EventArgs e)
         {
             SolCastForm sf = new(solcast);
@@ -379,6 +375,13 @@ namespace Controller
 
             if (sofar.DataAvailable)
             {
+                if (!sofar.TOU1.Enabled)
+                {
+                    Debugger.Break();
+
+                    sofar.UpdateTOUData(0, options);
+                }
+
                 TOUSingle frm = new(sofar.TOU1, sofar, options);
                 frm.ShowDialog();
             }
@@ -445,7 +448,7 @@ namespace Controller
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            sofar.SetWorkMode(sofar.mode, options);
+            //sofar.SetWorkMode(sofar.mode, options);
 
             if (DataUpdateTimer is not null)
                 DataUpdateTimer.Dispose();
@@ -470,7 +473,7 @@ namespace Controller
             options.Save();
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void Options_Click(object sender, EventArgs e)
         {
             Options optionsForm = new Options(options);
             optionsForm.ShowDialog(options);

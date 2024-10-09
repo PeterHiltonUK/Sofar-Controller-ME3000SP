@@ -50,6 +50,7 @@ namespace SofarController
         public const ushort Case1 = 0, Case2 = 1, Case3 = 2, Case4 = 3;
         public const ushort Enable = 1, Disable = 0;
         public const ushort AutoMode = 0, TOUMode = 1, TimedMode = 2, PassiveMode = 3;
+        public const byte Slave = 1;
 
         public TOUData TOU1;
         public TOUData TOU2;
@@ -406,6 +407,14 @@ namespace SofarController
         {
             if (master is not null)
             {
+                enabled = (int)master.ReadHoldingRegisters(1, TOUEnableAddress, 1, options.WIFI)[0]; // Enabled
+
+                if (enabled == 0)
+                {
+                    master.WriteMultipleRegisters(Slave, TOUCaseAddress, [Case1]);
+                    master.WriteMultipleRegisters(Slave, TOUEnableAddress, [1]);
+                }
+
                 var STime = master.ReadHoldingRegisters(1, 0x1208, 1, options.WIFI); // Start time
                 var ETime = master.ReadHoldingRegisters(1, 0x1209, 1, options.WIFI); // End Time
                 var SDate = master.ReadHoldingRegisters(1, 0x120C, 1, options.WIFI); // Start Date

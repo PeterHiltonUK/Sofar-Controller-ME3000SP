@@ -675,7 +675,7 @@
             button12.TabIndex = 0;
             button12.Text = "Options";
             button12.UseVisualStyleBackColor = false;
-            button12.Click += button12_Click;
+            button12.Click += Options_Click;
             // 
             // v8GaugeBattery
             // 

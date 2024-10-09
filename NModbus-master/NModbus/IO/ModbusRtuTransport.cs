@@ -58,9 +58,9 @@ namespace NModbus.IO
 
             while (numBytesReadTotal != count)
             {
-                Debug.Print(frameBytes.ToString());
-                Debug.Print(numBytesReadTotal.ToString());
-                Debug.Print(count.ToString());
+                //Debug.Print(frameBytes.ToString());
+               // Debug.Print(numBytesReadTotal.ToString());
+                //Debug.Print(count.ToString());
 
                 int numBytesRead = StreamResource.Read(frameBytes, numBytesReadTotal, count - numBytesReadTotal);
                 

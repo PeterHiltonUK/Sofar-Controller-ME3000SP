@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <NoXamlPreprocessor>True</NoXamlPreprocessor>
+    <OpenSilverType>6</OpenSilverType>
+    <PublishTrimmed>true</PublishTrimmed>
+    <WasmEnableSIMD>false</WasmEnableSIMD>
+    <!-- Uncomment to enable AOT compilation when publishing -->
+    <!--<RunAOTCompilation>true</RunAOTCompilation>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FakesAssemblies\**" />
+    <Content Remove="FakesAssemblies\**" />
+    <EmbeddedResource Remove="FakesAssemblies\**" />
+    <None Remove="FakesAssemblies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.QualityTools.Testing.Fakes" Version="17.5.0-beta.23060.1" />
+    <PackageReference Include="OpenSilver" Version="3.0.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DisableImplicitNamespaceImports>True</DisableImplicitNamespaceImports>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenSilverApplication1\OpenSilverApplication1.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
+  </ItemGroup>
+
+</Project>
