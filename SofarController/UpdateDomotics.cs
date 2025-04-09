@@ -4,6 +4,8 @@ namespace SofarController
 {
     internal class UpdateDomotics
     {
+        bool solcastsent=false;
+        TimeOnly SoldCaseUpdateTime = new TimeOnly(20, 0);
         public void SendData(Sofar sofar, Solcast solcast)
         {
             if (sofar.Data.Count > 10)
@@ -47,8 +49,18 @@ namespace SofarController
                 if (sofar.Data.ContainsKey(eData.TotalLoadConsumption))
                     ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=20&nvalue=0&svalue=" + sofar.Data[eData.TotalLoadConsumption]);
 
+
                 if (solcast is not null)
-                    ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=32&nvalue=0&svalue=" + ((solcast.ForecastAM + solcast.ForecastPM)*100).ToString("F2"));
+                    if (!solcastsent && DateTime.Now.Ticks > SoldCaseUpdateTime.Ticks)
+                    {
+                        solcast.Update(); // get latest forecast
+                        solcastsent=true;
+                        ExecuteCurl("http://127.0.0.1:8080/json.htm?type=command&param=udevice&idx=31&nvalue=0&svalue=" + (solcast.ForecastAM + solcast.ForecastPM).ToString("F2"));
+                    }
+                    else if(solcastsent && DateTime.Now.Ticks < SoldCaseUpdateTime.Ticks)
+                    {
+                        solcastsent=false;
+                    }
             }
         }
 

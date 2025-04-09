@@ -8,7 +8,7 @@ namespace SofarController
     {
         private DateTime LastDataSetForecast = new(), LastDataSetActual = new();
         public double ForecastAM, ForecastPM, ForecastTodayAM, ForecastTodayPM;
-        public SollCastMainInfo forecast;
+        public SollCastMainInfo? forecast;
         //private string dir = AppDomain.CurrentDomain.BaseDirectory;
         string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string filename = "\\SolCastForeCast.dat";
@@ -57,6 +57,20 @@ namespace SofarController
             }
 
             this.options = options;
+        }
+
+        public void Update()
+        {
+            forecast = GetSolcastForeCast();
+
+            if (forecast is not null && forecast.forecasts is not null)
+            {
+                ForecastTodayAM = forecast.SumAMData(0);
+                ForecastTodayPM = forecast.SumPMData(0);
+
+                ForecastAM = forecast.SumAMData(1);
+                ForecastPM = forecast.SumPMData(1);
+            }
         }
 
 

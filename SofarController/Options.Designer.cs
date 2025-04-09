@@ -162,6 +162,7 @@
             COMPORTtxt.Size = new Size(100, 23);
             COMPORTtxt.TabIndex = 23;
             COMPORTtxt.Text = "Enter";
+            COMPORTtxt.TextChanged += COMPORTtxt_TextChanged;
             COMPORTtxt.Validating += COMPORTtxt_Validating;
             // 
             // label1

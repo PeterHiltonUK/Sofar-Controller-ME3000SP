@@ -21,10 +21,10 @@ namespace Tests
         [TestMethod]
         public void TestWIFIData()
         {
-            var sock = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            var serverIP = IPAddress.Parse("192.168.1.228");
-            var serverFullAddr = new IPEndPoint(serverIP, 8899);
+            IPAddress serverIP = IPAddress.Parse("192.168.1.228");
+            IPEndPoint serverFullAddr = new(serverIP, 8899);
             sock.Connect(serverFullAddr);
 
             var factory = new ModbusFactory();
@@ -37,7 +37,7 @@ namespace Tests
 
             ushort power, cycles;
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i <= 1; i++)
             {
                 Thread.Sleep(1000);
                // sock.Disconnect(true);

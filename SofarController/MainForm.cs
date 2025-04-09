@@ -18,14 +18,20 @@ namespace Controller
         private Options optionFrm;
         private OptionData options = new();
         private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        private MyTimer2 MyTimer = new MyTimer2();
+        private MyTimer2 MyTimer = new();
         private int WIFIUpdatePeriod = 5;
         private double WiredUpdatePeriod = 5;
         bool TOUUpdated = false;
+        MacroData data = new();
+        bool solcastRetrieved = false;
 
         public void UpdateByTimer()
         {
-            solcast = new Solcast(options);
+            if (!solcastRetrieved)
+            {
+                solcast = new Solcast(options);
+                solcastRetrieved = true;
+            }
 
             if (!TOUUpdated)
             {
@@ -44,7 +50,8 @@ namespace Controller
             if (GetWorkModeCBX() != wm)
             {
                 SetWorkModeCBX(wm);
-            };
+            }
+            ;
 
             if (WIFICBX.Checked)
             {
@@ -55,18 +62,17 @@ namespace Controller
                 MyTimer.Interval = (((int)WiredUpdatePeriod * 60 * 1000)); // 1 mins
             }
 
+            data.UpdateMacrodata(sofar, solcast);
+
+            Macros m = new();
+            TOUData tou =  m.ChargeBattteryWhenSolarForecastIsLow(sofar, options, data);
+
             if (TOUMacroCBX.Checked)
             {
                 if (DateTime.Now.Hour > 11 && DateTime.Now.Hour < 1 && !TOUMacroRun)
                 {
-                    Macros m = new();
-                    m.ChargeBattteryWhenSolarForecastIsLow(sofar, solcast, options);
-                    TOUMacroRun = true;
-                }
-                else if (DateTime.Now.Hour > 1)
-                {
-                    TOUMacroRun = false;
-                }
+                    sofar.WriteTimeOfUseParams(0, tou, options);
+                }      
             }
 
             UpdateTimeLabel();
@@ -87,7 +93,7 @@ namespace Controller
             UpdateByTimer();
         }
 
-        public void StartSingeThreadTimer()
+        public void StartSingleThreadTimer()
         {
             if (WIFICBX.Checked)
             {
@@ -95,6 +101,7 @@ namespace Controller
             }
             else
             {
+                WiredUpdatePeriod = 1;
                 MyTimer.Interval = ((int)(WiredUpdatePeriod * 60 * 1000)); // 1 mins
             }
 
@@ -121,7 +128,8 @@ namespace Controller
             Application.DoEvents();
             sofar.GetData(options, true);
             UpdateGaugeControls();
-            StartSingeThreadTimer();
+            domoticz.SendData(sofar, solcast);
+            StartSingleThreadTimer();
             //StartMultiThreadTimer();
             //UpdateByTimer();
         }
@@ -129,9 +137,12 @@ namespace Controller
         private void MainForm_Load(object sender, EventArgs e)
         {
             solcast = new Solcast(options);
+            solcastRetrieved = true;
+
             WIFICBX.Checked = options.WIFI;
 
             sofar = new Sofar(options);
+
             WorkMode mode = sofar.GetWorkMode(options);
 
             //  sofar.GetData(options, true);
@@ -350,7 +361,7 @@ namespace Controller
 
         private void Passive_Click(object sender, EventArgs e)
         {
-            if(DataUpdateTimer is not null)
+            if (DataUpdateTimer is not null)
                 DataUpdateTimer.Change(10000, 50000);
 
             if (sofar.mode == WorkMode.PASSIVE)
@@ -363,7 +374,7 @@ namespace Controller
                 MessageBox.Show("Please select Passive mode");
             }
 
-            if(DataUpdateTimer is not null)
+            if (DataUpdateTimer is not null)
                 DataUpdateTimer.Change(100, 5000);
         }
 
@@ -396,7 +407,7 @@ namespace Controller
         {
             if (DataUpdateTimer is not null)
                 DataUpdateTimer.Change(10000, 50000);
-            
+
             AgileForm frm = new AgileForm(agile);
             frm.ShowDialog();
 
@@ -708,6 +719,15 @@ namespace Controller
             {
                 v8GaugeInverterT.Value = val;
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            data.UpdateMacrodata(sofar, solcast);
+            Macros macro = new();
+            macro.ChargeBattteryWhenSolarForecastIsLow(sofar, options, data);
+            MacroForm mf = new(data);
+            mf.Show();
         }
     }
 }

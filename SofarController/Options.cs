@@ -25,7 +25,7 @@ namespace SofarController
                 IPPortTxt.Text = optionData.IPPort.ToString();
                 IPAddresstxt.Text = optionData.IPAddress.ToString();
                 SerialTXT.Text = optionData.SerialNo.ToString();
-                SolcastAPIKey.Text=optionData.SolAPI.ToString();
+                SolcastAPIKey.Text = optionData.SolAPI.ToString();
                 SolcastLocationCodeTXT.Text = optionData.SolLoc.ToString();
             }
             else
@@ -118,6 +118,17 @@ namespace SofarController
                 SolcastAPIKey.BackColor = Color.Red;
         }
 
+        private void COMPORTtxt_TextChanged(object sender, EventArgs e)
+        {
+            if (COMPORTtxt.Text.Length>3)
+            {
+                optionData.COMPort = COMPORTtxt.Text;
+                COMPORTtxt.BackColor = Color.White;
+            }
+            else
+                COMPORTtxt.BackColor = Color.Red;
+        }
+
         public string COMPort
         {
             get
@@ -136,7 +147,7 @@ namespace SofarController
         private string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
         [JsonProperty("COMPort")]
-        public string COMPort = "COM2";
+        public string COMPort = "COM1";
 
         [JsonProperty("WIFI")]
         public bool WIFI;

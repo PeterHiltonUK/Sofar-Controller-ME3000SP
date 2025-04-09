@@ -121,7 +121,7 @@ namespace SofarController
             setPortOrSockets(options);
         }
 
-        public void setPortOrSockets(OptionData options)
+        public bool setPortOrSockets(OptionData options)
         {
             if (options.WIFI)
             {
@@ -157,15 +157,25 @@ namespace SofarController
                     {
                         port.Open();
                         master = factory.CreateRtuMaster(port);
+
                         break;
                     }
                     catch
                     {
-                        Thread.Sleep(5000);
-                        MessageBox.Show("Port is preoccupied, will try 5 times");
+                        Thread.Sleep(3000);
                     }
+
+                    if (i == 5)
+                        return false;
                 }
             }
+
+            if(master is not null)
+                return true;
+            port = null;
+            //sock = null;
+            MessageBox.Show("Unable to make port connection");
+            return false;
         }
 
         /// <summary>
@@ -174,9 +184,8 @@ namespace SofarController
         /// <returns></returns>
         public List<Tuple<string, int, double, double, bool>> GetData(OptionData options, bool UpdateTOU)
         {
-            master.V5IPAddress = options.IPAddress;
-            master.V5IPPort = options.IPPort;
-            master.V5SerialNo = options.SerialNo;
+            if(master == null)
+                setPortOrSockets(options);
 
             List<Tuple<string, int, double, double, bool>> variables =
             [
@@ -202,6 +211,13 @@ namespace SofarController
                 Tuple.Create("Inverter Heatsink Temp", 0x239, 0.0, 1d, false),
                 Tuple.Create("Inverter Running State", 0x200, 0.0, 1d, false),
             ];
+
+            if (master is null)
+                return variables;
+
+            master.V5IPAddress = options.IPAddress;
+            master.V5IPPort = options.IPPort;
+            master.V5SerialNo = options.SerialNo;
 
             Data.Clear();
 
@@ -409,10 +425,10 @@ namespace SofarController
             {
                 enabled = (int)master.ReadHoldingRegisters(1, TOUEnableAddress, 1, options.WIFI)[0]; // Enabled
 
-                if (enabled == 0)
+                if (enabled == 0) // if numbers cant be read, seta value which makes them readable, shadow registers somewhere?
                 {
-                    master.WriteMultipleRegisters(Slave, TOUCaseAddress, [Case1]);
-                    master.WriteMultipleRegisters(Slave, TOUEnableAddress, [1]);
+                    master.WriteMultipleRegisters(Slave, TOUCaseAddress, [Case1], options.WIFI);
+                    master.WriteMultipleRegisters(Slave, TOUEnableAddress, [1], options.WIFI);
                 }
 
                 var STime = master.ReadHoldingRegisters(1, 0x1208, 1, options.WIFI); // Start time

@@ -8,20 +8,17 @@ using System.Management;
 
 namespace Tests
 {
-
     [TestClass]
     public class SetModes
     {
         [TestMethod]
         public void SetAutoMode()
         {
-
             List<String> allPorts = new List<String>();
             foreach (String portName in System.IO.Ports.SerialPort.GetPortNames())
             {
                 allPorts.Add(portName);
             }
-
 
             string[] portNames = System.IO.Ports.SerialPort.GetPortNames();
             Debug.Print("Available ports:");
@@ -61,7 +58,7 @@ namespace Tests
             };
             port.Open();
             Debug.Print(port.CDHolding.ToString());
-          
+
             ModbusFactory factory = new();
             IModbusMaster master = factory.CreateRtuMaster(port);
 
@@ -109,7 +106,7 @@ namespace Tests
             ushort WorkModeAddress = 0x1200, TOUCaseAddress = 0x1207, TOUEnableAddress = 0x120F,
                 TOUForcedChargingSartTime = 0x1208, TOUForcedChargingEndTime = 0x1209,
                 TOUForcedChargingSOC = 0x120A, TOUForcedChargingPower = 0x120B,
-                TOUForcedChargingStartingDate = 0x120C, TOUForcedChargingEndDate = 0x120D, 
+                TOUForcedChargingStartingDate = 0x120C, TOUForcedChargingEndDate = 0x120D,
                 TOUForcedChargingDays = 0x120E;
 
             ushort Case1 = 0, Case2 = 1;
@@ -123,7 +120,8 @@ namespace Tests
             ushort edate = ByteHelper.UShort(12, 31);
             ushort Power = 3000, SOC = 90;
 
-            SerialPort port = new("COM2")
+            //SerialPort port = new("COM2")
+            SerialPort port = new("COM1")
             {
                 // configure serial port
                 BaudRate = 9600,
@@ -137,14 +135,14 @@ namespace Tests
             IModbusMaster master = factory.CreateRtuMaster(port);
 
             var res0 = master.ReadHoldingRegisters(Slave, WorkModeAddress, 1)[0];  // Enable
-            var res1 = master.ReadHoldingRegisters(Slave, TOUCaseAddress, 1)[0];  
-            var res2 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSartTime, 1)[0];  
-            var res3 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndTime, 1)[0];  
-            var res4 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSOC, 1)[0];  
-            var res5 = master.ReadHoldingRegisters(Slave, TOUForcedChargingPower, 1)[0];  
-            var res6 = master.ReadHoldingRegisters(Slave, TOUForcedChargingStartingDate, 1)[0];  
-            var res7 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndDate, 1)[0];  
-            var res8 = master.ReadHoldingRegisters(Slave, TOUForcedChargingDays, 1)[0];  
+            var res1 = master.ReadHoldingRegisters(Slave, TOUCaseAddress, 1)[0];
+            var res2 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSartTime, 1)[0];
+            var res3 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndTime, 1)[0];
+            var res4 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSOC, 1)[0];
+            var res5 = master.ReadHoldingRegisters(Slave, TOUForcedChargingPower, 1)[0];
+            var res6 = master.ReadHoldingRegisters(Slave, TOUForcedChargingStartingDate, 1)[0];
+            var res7 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndDate, 1)[0];
+            var res8 = master.ReadHoldingRegisters(Slave, TOUForcedChargingDays, 1)[0];
             var res9 = master.ReadHoldingRegisters(Slave, TOUEnableAddress, 1)[0];
 
             master.WriteMultipleRegisters(Slave, TOUCaseAddress, [Case1]);//, 0, 100, 0, 1]);
@@ -159,20 +157,19 @@ namespace Tests
             //master.WriteMultipleRegisters(Slave, TOUCaseAddress, [0]);
 
             res0 = master.ReadHoldingRegisters(Slave, WorkModeAddress, 1)[0];  // Enable
-            res1 = master.ReadHoldingRegisters(Slave, TOUCaseAddress, 1)[0]; 
-            res2 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSartTime, 1)[0]; 
-            res3 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndTime, 1)[0]; 
-            res4 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSOC, 1)[0]; 
-            res5 = master.ReadHoldingRegisters(Slave, TOUForcedChargingPower, 1)[0]; 
-            res6 = master.ReadHoldingRegisters(Slave, TOUForcedChargingStartingDate, 1)[0]; 
-            res7 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndDate, 1)[0]; 
-            res8 = master.ReadHoldingRegisters(Slave, TOUForcedChargingDays, 1)[0]; 
+            res1 = master.ReadHoldingRegisters(Slave, TOUCaseAddress, 1)[0];
+            res2 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSartTime, 1)[0];
+            res3 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndTime, 1)[0];
+            res4 = master.ReadHoldingRegisters(Slave, TOUForcedChargingSOC, 1)[0];
+            res5 = master.ReadHoldingRegisters(Slave, TOUForcedChargingPower, 1)[0];
+            res6 = master.ReadHoldingRegisters(Slave, TOUForcedChargingStartingDate, 1)[0];
+            res7 = master.ReadHoldingRegisters(Slave, TOUForcedChargingEndDate, 1)[0];
+            res8 = master.ReadHoldingRegisters(Slave, TOUForcedChargingDays, 1)[0];
             res9 = master.ReadHoldingRegisters(Slave, TOUEnableAddress, 1)[0]; //enabled
 
             //master.WriteMultipleRegisters(Slave, TOUCaseAddress, [1, Starttime, endtime, 90, 2500, sdate, edate, 255, 1]);
             //master.WriteMultipleRegisters(Slave, WorkModeAddress, [(ushort)WorkMode.TOU]);
         }
-
 
         [TestMethod]
         public void TestMode()
@@ -204,9 +201,8 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TestAllRegisters ()
-        { 
-
+        public void TestAllRegisters()
+        {
             SerialPort port = new("COM2")
             {
                 // configure serial port
@@ -222,7 +218,6 @@ namespace Tests
 
             //Debug.Print("Scanning input registers");
 
-
             /*for (ushort register_addr = 30000; register_addr <= 39999; register_addr++)
                 try
                 {
@@ -230,10 +225,10 @@ namespace Tests
                     Debug.Print("Register: {x:05}\t\tValue: {val:05} ({val:#06x})");
                 }
                 catch { }
-            
+
             Debug.Print("Finished scanning input registers");*/
             Debug.Print("Scanning holding registers");
-            
+
             for (ushort register_addr = 0x1200; register_addr <= 0x1300; register_addr++)
                 try
                 {
@@ -242,9 +237,8 @@ namespace Tests
                     Debug.Print("Register: " + register_addr.ToString("x") + " " + val.ToString());
                 }
                 catch { }
-            
+
             Debug.Print("Finished scanning holding registers");
         }
     }
 }
-
